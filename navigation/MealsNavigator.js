@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as Font from "expo-font";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import Color from "../Colors/colors";
@@ -18,8 +19,12 @@ import CategoriesScreen from "../screens/CategoriesScreens";
 import CategoryMealScreen from "../screens/CategoryMealScreen";
 import MealDetailScreen from "../screens/MealDetailScreen";
 import HeaderButton from "../components/HeaderButton";
+import FavouriteScreen from '../screens/FavouriteScreen';
+
 
 const Stack = createStackNavigator();
+
+const Tab = createBottomTabNavigator();
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -30,6 +35,7 @@ const fetchFonts = () => {
 
 const MealsNavigator = (props) => {
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   if (!dataLoaded) {
     return (
       <AppLoading
@@ -39,8 +45,8 @@ const MealsNavigator = (props) => {
       />
     );
   }
-  return (
-    <NavigationContainer>
+  const stackScreen = () => {
+    return (
       <Stack.Navigator>
         <Stack.Screen
           name="Categories"
@@ -80,16 +86,9 @@ const MealsNavigator = (props) => {
               <HeaderButtons HeaderButtonComponent={HeaderButton}>
                 <Item
                   title="Favourite"
-                  iconName="ios-star"
+                  iconName={isVisible ? "ios-star" : "ios-star-outline"}
                   onPress={() => {
-                    console.log("Mark as favourite");
-                  }}
-                />
-                <Item
-                  title="Favourite"
-                  iconName="ios-star-outline"
-                  onPress={() => {
-                    console.log("Mark as favourite");
+                    setIsVisible(!isVisible);
                   }}
                 />
               </HeaderButtons>
@@ -105,6 +104,14 @@ const MealsNavigator = (props) => {
           }}
         />
       </Stack.Navigator>
+    );
+  };
+  return (
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Meals" component={stackScreen} />
+        <Tab.Screen name="Favourite" component={FavouriteScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };
